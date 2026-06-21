@@ -1,0 +1,14 @@
+{
+  "service": "billing",
+  "version": 3,
+  "endpoints": [
+    { "name": "create", "method": "POST", "auth": true },
+    { "name": "status", "method": "GET", "auth": false }
+  ],
+  "limits": {
+    "rps": 100,
+    "burst": 250,
+    "regions": ["us-east", "eu-west"]
+  },
+  "flags": {}
+}

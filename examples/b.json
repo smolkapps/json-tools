@@ -1,0 +1,10 @@
+{
+  "service": "billing",
+  "version": 4,
+  "limits": {
+    "rps": 200,
+    "burst": 250
+  },
+  "regions": ["us-east", "ap-south"],
+  "owner": "platform-team"
+}
