@@ -15,13 +15,14 @@ use json_tools::flatten;
 use json_tools::fmt::{self, FmtOptions};
 use json_tools::get;
 use json_tools::merge::{self, ArrayPolicy};
+use json_tools::to_csv;
 use json_tools::{parse, read_input};
 
 #[derive(Parser)]
 #[command(
     name = "json-tools",
     version,
-    about = "A JSON swiss-army knife: fmt, validate, flatten/unflatten, get, keys, diff, merge",
+    about = "A JSON swiss-army knife: fmt, validate, flatten/unflatten, get, keys, diff, merge, to-csv",
     long_about = None,
 )]
 struct Cli {
@@ -47,6 +48,8 @@ enum Command {
     Diff(DiffArgs),
     /// Deep-merge two or more JSON files (later wins).
     Merge(MergeArgs),
+    /// Convert an array of objects to CSV (union of keys, key order preserved).
+    ToCsv(SingleInputOut),
 }
 
 /// A single optional input file (stdin when omitted).
@@ -173,6 +176,7 @@ fn run() -> Result<()> {
         Command::Keys(a) => cmd_keys(a),
         Command::Diff(a) => cmd_diff(a),
         Command::Merge(a) => cmd_merge(a),
+        Command::ToCsv(a) => cmd_to_csv(a),
     }
 }
 
@@ -261,6 +265,12 @@ fn cmd_diff(a: DiffArgs) -> Result<()> {
     } else {
         diff::render_text(&changes)
     };
+    emit(a.output.as_ref(), &s)
+}
+
+fn cmd_to_csv(a: SingleInputOut) -> Result<()> {
+    let v = load(a.file.as_ref())?;
+    let s = to_csv::to_csv(&v)?;
     emit(a.output.as_ref(), &s)
 }
 

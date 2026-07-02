@@ -12,6 +12,7 @@ pub mod flatten;
 pub mod fmt;
 pub mod get;
 pub mod merge;
+pub mod to_csv;
 
 use anyhow::{Context, Result};
 

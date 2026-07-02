@@ -73,11 +73,23 @@ json-tools merge --array replace a.json b.json  # arrays replaced (default)
 Objects merge recursively; existing key order is preserved and new keys from
 later files append in order. On any type mismatch, the later value wins.
 
+### `to-csv` — flatten an array of objects into CSV
+```sh
+json-tools to-csv users.json          # header + one row per object
+cat users.json | json-tools to-csv
+```
+Columns are the union of every object's keys in **first-seen order** (input key
+order is preserved, not alphabetized). A lone object is treated as a single
+row. Missing keys become empty fields; `null` is empty, nested objects/arrays
+are emitted as compact JSON, and fields containing a comma, quote, or newline
+are quoted per RFC 4180.
+
 ## Library
 
 Every operation is a pure function over `serde_json::Value` in the
 `json_tools` library crate (`fmt`, `validate` via `parse`, `flatten`,
-`unflatten`, `get`, `keys`, `diff`, `merge`). The binary is a thin wrapper.
+`unflatten`, `get`, `keys`, `diff`, `merge`, `to_csv`). The binary is a thin
+wrapper.
 
 ## License
 
