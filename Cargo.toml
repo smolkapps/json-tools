@@ -2,7 +2,7 @@
 name = "json-tools"
 version = "0.1.0"
 edition = "2021"
-description = "A JSON swiss-army knife CLI: fmt, validate, flatten/unflatten, get, keys, diff, merge"
+description = "A JSON swiss-army knife CLI: fmt, validate, flatten/unflatten, get, keys, diff, merge, to-csv"
 license = "MIT"
 authors = ["smolkai <smolkai@users.noreply.github.com>"]
 repository = ""

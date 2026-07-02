@@ -73,11 +73,37 @@ json-tools merge --array replace a.json b.json  # arrays replaced (default)
 Objects merge recursively; existing key order is preserved and new keys from
 later files append in order. On any type mismatch, the later value wins.
 
+### `to-csv` — flatten an array of objects into CSV
+```sh
+json-tools to-csv users.json                    # header + one row per object
+cat users.json | json-tools to-csv
+json-tools to-csv --escape-formulas users.json  # neutralize spreadsheet formulas
+```
+Columns are the union of every object's keys in **first-seen order** (input key
+order is preserved, not alphabetized). A lone object is treated as a single
+row. Missing keys become empty fields; `null` is empty, nested objects/arrays
+are emitted as compact JSON.
+
+Fields containing a comma, double quote, CR, or LF are wrapped in double quotes
+with embedded quotes doubled, following RFC 4180's field-quoting rules. Records,
+however, are separated by a bare `\n` (LF), not RFC 4180's CRLF — matching the
+Unix-newline output of the other subcommands.
+
+Integers outside the `i64`/`u64` range are parsed as `f64`, so very large
+values may render in scientific notation (e.g. `1e30`) rather than as exact
+integers.
+
+`--escape-formulas` (off by default) prefixes any cell — header or data —
+beginning with `=`, `+`, `-`, or `@` with a single quote so spreadsheet apps
+treat it as text. This defends against CSV/formula injection when the output is
+opened in Excel, Google Sheets, or LibreOffice.
+
 ## Library
 
 Every operation is a pure function over `serde_json::Value` in the
 `json_tools` library crate (`fmt`, `validate` via `parse`, `flatten`,
-`unflatten`, `get`, `keys`, `diff`, `merge`). The binary is a thin wrapper.
+`unflatten`, `get`, `keys`, `diff`, `merge`, `to_csv`). The binary is a thin
+wrapper.
 
 ## License
 
