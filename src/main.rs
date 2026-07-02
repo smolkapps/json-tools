@@ -49,7 +49,7 @@ enum Command {
     /// Deep-merge two or more JSON files (later wins).
     Merge(MergeArgs),
     /// Convert an array of objects to CSV (union of keys, key order preserved).
-    ToCsv(SingleInputOut),
+    ToCsv(ToCsvArgs),
 }
 
 /// A single optional input file (stdin when omitted).
@@ -67,6 +67,20 @@ struct SingleInputOut {
     /// Write output here instead of stdout.
     #[arg(short = 'o', long = "output")]
     output: Option<PathBuf>,
+}
+
+#[derive(Args)]
+struct ToCsvArgs {
+    /// Input file; reads stdin if omitted.
+    file: Option<PathBuf>,
+    /// Write output here instead of stdout.
+    #[arg(short = 'o', long = "output")]
+    output: Option<PathBuf>,
+    /// Prefix cells beginning with `=`, `+`, `-`, or `@` with a single quote so
+    /// spreadsheets treat them as text (CSV formula-injection defense). Off by
+    /// default.
+    #[arg(long = "escape-formulas")]
+    escape_formulas: bool,
 }
 
 #[derive(Args)]
@@ -268,9 +282,14 @@ fn cmd_diff(a: DiffArgs) -> Result<()> {
     emit(a.output.as_ref(), &s)
 }
 
-fn cmd_to_csv(a: SingleInputOut) -> Result<()> {
+fn cmd_to_csv(a: ToCsvArgs) -> Result<()> {
     let v = load(a.file.as_ref())?;
-    let s = to_csv::to_csv(&v)?;
+    let s = to_csv::to_csv(
+        &v,
+        to_csv::CsvOptions {
+            escape_formulas: a.escape_formulas,
+        },
+    )?;
     emit(a.output.as_ref(), &s)
 }
 

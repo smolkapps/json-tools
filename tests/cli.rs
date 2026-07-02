@@ -287,6 +287,27 @@ fn to_csv_union_of_keys_and_escaping() {
 }
 
 #[test]
+fn to_csv_escape_formulas_flag() {
+    cmd()
+        .arg("to-csv")
+        .arg("--escape-formulas")
+        .write_stdin(r#"[{"a":"=1+2","b":"safe"}]"#)
+        .assert()
+        .success()
+        .stdout("a,b\n'=1+2,safe\n");
+}
+
+#[test]
+fn to_csv_escape_formulas_off_by_default() {
+    cmd()
+        .arg("to-csv")
+        .write_stdin(r#"[{"a":"=1+2","b":"safe"}]"#)
+        .assert()
+        .success()
+        .stdout("a,b\n=1+2,safe\n");
+}
+
+#[test]
 fn to_csv_rejects_non_object_array() {
     cmd()
         .arg("to-csv")
